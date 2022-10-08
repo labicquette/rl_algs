@@ -1,8 +1,11 @@
 import os
 import functools
 import time
-from omegaconf import OmegaConf
-import my_gym as gym  #O.Sigaud Gym (0.21.0)
+import hydra
+from omegaconf import DictConfig
+import gym
+import my_gym #O.Sigaud Gym (0.21.0)
+
 import bbrl
 import copy
 import torch
@@ -121,3 +124,11 @@ def run_dqn(cfg, max_grad_norm=0.5):
                     os.makedirs(directory)
                 filename = directory + "dqn0_" + str(mean.item()) + ".agt"
                 eval_agent.save_model(filename)
+
+@hydra.main(config_path=os.path.join(os.getcwd(),'configs/'), config_name="dqn.yaml")
+def main (config : DictConfig):
+    torch.manual_seed(config.algorithm.seed)
+    run_dqn(config)
+
+if __name__=='__main__':
+    main()
