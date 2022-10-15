@@ -96,6 +96,7 @@ def run_cem(cfg):
         
 
             #main cem loop
+        acquisition_workspaces = []
         nb_agent_finished = 0
         while(nb_agent_finished < pop_size):
             n_to_launch = min(pop_size-nb_agent_finished, n_processes)
@@ -103,7 +104,7 @@ def run_cem(cfg):
                 idx_weight = idx_agent + nb_agent_finished
                 cem_pop.update_acquisition_actor(actors[idx_agent],idx_weight)
                 # TODO: add noise args to agents interaction with env ? Alois does not. 
-                workers[idx_agent](train_workspace, t=0, n_steps=cfg.algorithm.n_steps)
+                workers[idx_agent](t=0, n_steps=cfg.algorithm.n_steps)
 
             #Wait for agents execution
             running=True
@@ -114,16 +115,21 @@ def run_cem(cfg):
             nb_agent_finished += n_to_launch
             acquisition_workspaces += [a.get_workspace() for a in workers[:n_to_launch]]        
             
-        cem_pop.train()
-        
-
-
-        transition_workspace = train_workspace.get_transitions()
-        action = transition_workspace["action"]
-        nb_steps += action[0].shape[0]
-        rb.put(transition_workspace)
+        agents_creward = torch.zeros(len(acquisition_workspaces))
+        for i,acquisition_worspace in enumerate(acquisition_workspaces):
+            done = acquisition_worspace['env/done']
+            cumulated_reward = acquisition_worspace['env/cumulated_reward']
+            creward = cumulated_reward[done]
+            agents_creward[i] = creward.mean()
+            transition_workspace = acquisition_worspace.get_transitions()
+            action = transition_workspace["action"]
+            nb_steps += action[0].shape[0]
+            rb.put(transition_workspace)
+            
         rb_workspace = rb.get_shuffled(cfg.algorithm.batch_size)
 
+        cem_pop.train(agents_creward)
+        
         done, truncated, reward, action = rb_workspace[
             "env/done", "env/truncated", "env/reward", "action"
         ]

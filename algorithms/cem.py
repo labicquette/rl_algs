@@ -74,7 +74,7 @@ class Cem:
         vector_to_parameters(weight,self.param_transfert_agent.parameters())        
         actor.load_state_dict(self.param_transfert_agent.state_dict())
 
-    def train(self,acq_workspaces, fitness, n_total_actor_steps,logger) -> None:
+    def train(self, fitness) -> None:
 
         # Compute fitness of population
         self.es_learner.tell(self.pop_weights,fitness) #  Update CEM
