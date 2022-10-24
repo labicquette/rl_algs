@@ -71,7 +71,7 @@ class Cem:
 
     def update_acquisition_actor(self,actor,i) -> None:
         weight = self.pop_weights[i]
-        vector_to_parameters(weight,self.param_transfert_agent.parameters())        
+        vector_to_parameters(weight.detach(),self.param_transfert_agent.parameters())        
         actor.load_state_dict(self.param_transfert_agent.state_dict())
 
     def train(self, fitness) -> None:

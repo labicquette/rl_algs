@@ -165,10 +165,11 @@ def setup_optimizers(cfg, actor, critic_1, critic_2):
 def compute_critic_loss(cfg, reward, must_bootstrap, q_values, target_q_values):
     # Compute temporal difference
     q_next = target_q_values
-    target = (
+    with torch.no_grad():
+        target = (
         reward[:-1][0]
         + cfg.algorithm.discount_factor * q_next.squeeze(-1) * must_bootstrap.int()
-    )
+        )
     td = target - q_values.squeeze(-1)
     # Compute critic loss
     td_error = td**2

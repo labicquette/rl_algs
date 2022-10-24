@@ -6,9 +6,19 @@ logger:
   every_n_seconds: 10
   verbose: False
   
+es_algorithm:
+  device : cpu
+  pop_size: 20
+  elites_nb: 10
+  sigma : 0.2
+  noise_multiplier: 0.8
+  noise_limit: 1e-5
+  diag_cov : True
+  active : True
+  classname : ES.cov_matrix.CEM
 
 algorithm:
-  seed: 1
+  seed: 432
   max_grad_norm: 0.5
   epsilon: 0.02
   n_envs: 1
@@ -27,11 +37,15 @@ algorithm:
   architecture:
       actor_hidden_size: [400, 300]
       critic_hidden_size: [400, 300]
+  learner:
+    classname: models.models.ContinuousDeterministicActor
+  num_processes: 12
       
 
 gym_env:
   classname: __main__.make_gym_env
   env_name: Pendulum-v1
+  #env_name: CartPoleContinuous-v1
 actor_optimizer:
   classname: torch.optim.Adam
   lr: 1e-3
