@@ -44,7 +44,8 @@ algorithm:
 
 gym_env:
   classname: __main__.make_gym_env
-  env_name: Pendulum-v1
+  #env_name: Pendulum-v1
+  env_name: Swimmer-v2
   #env_name: CartPoleContinuous-v1
 actor_optimizer:
   classname: torch.optim.Adam

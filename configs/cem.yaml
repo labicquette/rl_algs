@@ -8,9 +8,9 @@ logger:
   
 es_algorithm:
   device : cpu
-  pop_size: 20
-  elites_nb: 3
-  sigma : 0.2
+  pop_size: 30
+  elites_nb: 10
+  sigma : 0.25
   noise_multiplier: 0.8
   noise_limit: 1e-5
   diag_cov : True
@@ -44,7 +44,8 @@ algorithm:
 
 gym_env:
   classname: __main__.make_gym_env
-  env_name: Pendulum-v1
+  #env_name: Pendulum-v1
+  env_name: Swimmer-v2
   #env_name: CartPoleContinuous-v1
 actor_optimizer:
   classname: torch.optim.Adam

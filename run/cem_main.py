@@ -104,7 +104,12 @@ def run_cem(cfg):
                 idx_weight = idx_agent + nb_agent_finished
                 cem_pop.update_acquisition_actor(actors[idx_agent],idx_weight)
                 # TODO: add noise args to agents interaction with env ? Alois does not. 
-                workers[idx_agent](t=0, n_steps=cfg.algorithm.n_steps)
+                if epoch > 0 :
+                    actors[idx_agent].workspace.zero_grad()
+                    actors[idx_agent].workspace.copy_n_last_steps(1)
+                    workers[idx_agent](t=1, n_steps=cfg.algorithm.n_steps -1)
+                else :
+                    workers[idx_agent](t=0, n_steps=cfg.algorithm.n_steps)
 
             #Wait for agents execution
             running=True
